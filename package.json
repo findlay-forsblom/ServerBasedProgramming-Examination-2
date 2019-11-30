@@ -1,0 +1,37 @@
+{
+  "name": "ff222ey-examination-2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "devstart": "nodemon --inspect ./app.js",
+    "lint": "standard | snazzy || exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1dv523/ff222ey-examination-2.git"
+  },
+  "author": "ff222ey@student.lnu.se",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-hbs": "^2.2.0",
+    "express-session": "^1.17.0",
+    "moment": "^2.24.0",
+    "mongoose": "^5.7.12",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "*",
+    "snazzy": "*",
+    "standard": "*"
+  },
+  "nodemonConfig": {
+    "ext": "js,json,hbs,html,css"
+  },
+  "bugs": {
+    "url": "https://github.com/1dv523/ff222ey-examination-2/issues"
+  },
+  "homepage": "https://github.com/1dv523/ff222ey-examination-2#readme"
+}

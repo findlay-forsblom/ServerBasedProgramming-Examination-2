@@ -1,5 +1,4 @@
 const homeController = {}
-const bcrypt = require('bcryptjs')
 const passwordChecker = require('../libs/passwordHelper.js')
 const User = require('../models/user.js')
 
@@ -12,8 +11,6 @@ homeController.signUp = (req, res, next) => {
 }
 
 homeController.signUpPost = async (req, res, next) => {
-  res.render('home/signUp')
-  // const hashed = '$2a$10$KDnQ2y2olkQE0/b5NClev.kxqDDr9qgdw7d.EOrdzG67CQpDxPqxy'
   let username = req.body.username
   let email = req.body.email
   username = username.trim()
@@ -22,7 +19,6 @@ homeController.signUpPost = async (req, res, next) => {
   const confirmPassword = req.body.confirmPassword
 
   const match = passwordChecker.checkSamePassword(password, confirmPassword)
-  // const length = passwordChecker.checklength(password)
   if (match) {
     try {
       const user = new User({
@@ -30,7 +26,6 @@ homeController.signUpPost = async (req, res, next) => {
         email: email,
         password: password
       })
-      console.log(user)
       await user.save()
       req.session.flash = { type: 'success', text: 'User succesfully created' }
       res.redirect('./')
@@ -39,21 +34,9 @@ homeController.signUpPost = async (req, res, next) => {
       res.redirect('/signup')
     }
   } else {
-    console.log('no match')
     req.session.flash = { type: 'danger', text: 'passwords do not match' }
     res.redirect('/signup')
   }
-
-  // const salt = await bcrypt.genSalt(10)
-  // console.log('salt is ', salt)
-  // const hash = await bcrypt.hash(password, salt)
-  // console.log('hash is', hash)
-  // const match = await bcrypt.compare(password, hashed)
-  // if (password === confirmPassword) {
-  //   console.log('same passwod')
-  // } else {
-  //   console.log('not same password')
-  // }
 }
 
 homeController.login = (req, res, next) => {
@@ -61,17 +44,27 @@ homeController.login = (req, res, next) => {
 }
 
 homeController.loginPost = async (req, res, next) => {
-  const email = req.body.email
+  const username = req.body.username
   const password = req.body.password
-  const user = await User.findOne({ email: email })
-  if (!user) {
-
-  }
-  const result = await user.comparePassword(password)
-  if (result) {
-
-  } else {
-
+  try {
+    const user = await User.findOne({ username })
+    if (!user) {
+      req.session.flash = { type: 'danger', text: 'Log in failed. username or password is incorrect' }
+      res.redirect('/login')
+      return
+    }
+    const result = await user.comparePassword(password)
+    if (result) {
+      req.session.flash = { type: 'success', text: 'Succesfully logged in' }
+      res.redirect('./')
+    } else {
+      req.session.flash = { type: 'danger', text: 'Log in failed. username or password is incorrect' }
+      res.redirect('/login')
+    }
+  } catch (error) {
+    console.log(error.message)
+    req.session.flash = { type: 'danger', text: error.message }
+    res.redirect('/login')
   }
 }
 

@@ -4,10 +4,28 @@ const User = require('../models/user.js')
 
 homeController.index = (req, res, next) => {
   res.render('home/home')
+  console.log(req.session)
 }
 
 homeController.signUp = (req, res, next) => {
   res.render('home/signUp')
+}
+
+homeController.redirectLogin = (req, res, next) => {
+  if (!req.session.userId) {
+    res.redirect('/login')
+  } else {
+    next()
+  }
+}
+
+// for login and signup
+homeController.redirectHome = (req, res, next) => {
+  if (req.session.userId) {
+    res.redirect('/')
+  } else {
+    next()
+  }
 }
 
 homeController.signUpPost = async (req, res, next) => {
@@ -28,6 +46,7 @@ homeController.signUpPost = async (req, res, next) => {
       })
       await user.save()
       req.session.flash = { type: 'success', text: 'User succesfully created' }
+      req.session.userId = user.id
       res.redirect('./')
     } catch (error) {
       req.session.flash = { type: 'danger', text: error.message }
@@ -56,6 +75,7 @@ homeController.loginPost = async (req, res, next) => {
     const result = await user.comparePassword(password)
     if (result) {
       req.session.flash = { type: 'success', text: 'Succesfully logged in' }
+      req.session.userId = user.id
       res.redirect('./')
     } else {
       req.session.flash = { type: 'danger', text: 'Log in failed. username or password is incorrect' }

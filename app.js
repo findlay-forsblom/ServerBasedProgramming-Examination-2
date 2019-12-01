@@ -5,11 +5,16 @@ const mongoose = require('./config/mongoose.js')
 const session = require('express-session')
 const port = 8000
 
+const SESSION_NAME = 'sid'
+const SESSION_SECRET = 'sshh!/it/s/a/secret/dontTell!!!'
+
 const app = express()
 
+app.use(express.urlencoded({ extended: false }))
+
 const sessionOptions = {
-  name: 'name of keyboard cat', // Don't use default session cookie name.
-  secret: 'keyboard cat', // Change it!!! The secret is used to hash the session with HMAC.
+  name: SESSION_NAME, // Don't use default session cookie name.
+  secret: SESSION_SECRET, // Change it!!! The secret is used to hash the session with HMAC.
   resave: false, // Resave even if a request is not changing the session.
   saveUninitialized: false, // Don't save a created but not modified session.
   cookie: {
@@ -31,7 +36,6 @@ app.engine('hbs', hbs.express4({
 app.set('view engine', 'hbs')
 // app.set('views', path.join(__dirname, 'views'))
 
-app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use((req, res, next) => {
@@ -39,6 +43,9 @@ app.use((req, res, next) => {
   if (req.session.flash) {
     res.locals.flash = req.session.flash
     delete req.session.flash
+  }
+  if (req.session.userId) {
+    res.locals.loggedIn = true
   }
 
   next()

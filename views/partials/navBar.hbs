@@ -2,12 +2,18 @@
     <a href="/" class="navbar-brand">Snippets viewer</a>
     <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav ml-auto">
-      <li class="nav-item">
-        <a class="nav-link" href="/login"><button class="btn btn-primary" type="submit">Log In</button></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/signUp"><button class="btn btn-primary" type="submit">SignUp</button></a>
-      </li>
+      {{#if loggedIn}}
+        <li>
+          <form method="post" action="/logout"><button class="btn btn-primary" type="submit">logout</button></form>
+        </li>
+        {{else}}
+        <li class="nav-item">
+          <a class="nav-link" href="/login"><button class="btn btn-primary" type="submit">Log In</button></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/signUp"><button class="btn btn-primary" type="submit">SignUp</button></a>
+        </li>
+        {{/if}}
     </ul>
   </div>
   </nav>

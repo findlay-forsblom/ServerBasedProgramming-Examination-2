@@ -2,6 +2,7 @@
 	body {
 		color: #fff;
 		font-family: 'Roboto', sans-serif;
+    background-color: #333;
 	}
 	.form-control, .form-control:focus, .input-group-addon {
 		border-color: #e1e1e1;
@@ -86,9 +87,12 @@
 		font-size: 7px;
 		position: absolute;
 	}
+  .black {
+    color: black;
+  }
 </style>
 <div class="signup-form">
-    <form action="/examples/actions/confirmation.php" method="post">
+    <form action="/signup" method="post">
 		<h2>Sign Up</h2>
 		<p>Please fill in this form to create an account!</p>
 		<hr>
@@ -116,7 +120,7 @@
 					<i class="fa fa-lock"></i>
 					<i class="fa fa-check"></i>
 				</span>
-				<input type="text" class="form-control" name="confirm_password" placeholder="Confirm Password" required="required">
+				<input type="text" class="form-control" name="confirmPassword" placeholder="Confirm Password" required="required">
 			</div>
         </div>
         <div class="form-group">
@@ -126,6 +130,6 @@
             <button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
         </div>
     </form>
-	<div class="text-center">Already have an account? <a href="#">Login here</a></div>
+	<div class="text-center ">Already have an account? <a href="/login" class="black">Login here</a></div>
 </div>
 </body>

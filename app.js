@@ -1,11 +1,16 @@
 const express = require('express')
 const hbs = require('express-hbs')
 const path = require('path')
-// const mongoose = require('./config/mongoose.js')
+const mongoose = require('./config/mongoose.js')
 const session = require('express-session')
 const port = 8000
 
 const app = express()
+
+mongoose.connect().catch(error => {
+  console.log(error)
+  process.exit(1)
+})
 
 app.engine('hbs', hbs.express4({
   defaultLayout: path.join(__dirname, 'views', 'layouts', 'default'),

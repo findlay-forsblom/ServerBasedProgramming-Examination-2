@@ -8,6 +8,8 @@ const port = 8000
 const SESSION_NAME = 'sid'
 const SESSION_SECRET = 'sshh!/it/s/a/secret/dontTell!!!'
 
+module.exports = SESSION_NAME
+
 const app = express()
 
 app.use(express.urlencoded({ extended: false }))
@@ -18,7 +20,8 @@ const sessionOptions = {
   resave: false, // Resave even if a request is not changing the session.
   saveUninitialized: false, // Don't save a created but not modified session.
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24 // 1 day
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
+    sameSite: true
   }
 }
 
@@ -45,7 +48,10 @@ app.use((req, res, next) => {
     delete req.session.flash
   }
   if (req.session.userId) {
-    res.locals.loggedIn = true
+    const lol = {}
+    lol.id = req.session.userId
+    console.log(lol.id)
+    res.locals.loggedIn = lol
   }
 
   next()

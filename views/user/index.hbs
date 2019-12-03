@@ -7,7 +7,7 @@
 		}
 		.section {
 			border: 4px solid #fff;
-			margin: 25px;
+			margin: 25px 0 10px ;
 			padding: 10px 20px;
 			overflow: hidden;
 			width: 710px;
@@ -30,13 +30,14 @@
 	</style>	
 </head>
 <body>
-
-  {{#if snipets }}
-{{#each snipets}}
-  <div class="section">
-    {{this.content}}
-	</div>	
-{{/each}}
-{{/if}}
+  {{#if snips }}
+    {{#each snips}}
+      <div class="section">
+        {{this.content}}
+      </div>
+      <a href="/snipets/edit/{{this.id}}"><button type="button" class="btn btn-success">Edit</button></a>
+      <form method="post" action="snipets/delete/{{this.id}}"><button type="button" class="btn btn-danger">Delete</button>
+    {{/each}}
+  {{/if}}
 	
 	

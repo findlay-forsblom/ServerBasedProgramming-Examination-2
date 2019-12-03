@@ -102,8 +102,22 @@ body {
 		<div id="margin">Tag: <input id="title" type="text" name="tag"></div>
 		<textarea placeholder="Enter code snipet." id="text" name="text" rows="4" style="word-wrap: break-word; resize: none; height: 160px; "></textarea>  
 		<br>
-		<input id="button" type="submit" value="Create">
-		
+    {{#if snipetEdit }}
+    	<input id="button" type="submit" value="Save">
+      <p>{{snipetEdit.content}}</p>
+      {{else}}
+      	<input id="button" type="submit" value="Create">
+    {{/if}}
 	</form>
 
 </div>
+
+{{#if snipetEdit }}
+<script type="text/javascript">
+  const text = document.getElementById('text')
+  console.log(text)
+  text.value = "{{snipetEdit.content}}"
+  const lol = "{{snipetEdit.content}}"
+  console.log(lol)
+</script>
+{{/if}}

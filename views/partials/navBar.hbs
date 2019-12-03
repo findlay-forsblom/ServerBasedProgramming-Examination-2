@@ -3,8 +3,11 @@
     <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav ml-auto">
       {{#if loggedIn}}
-        <li>
-          <form method="post" action="/logout"><button class="btn btn-primary" type="submit">logout</button></form>
+        <li class="nav-item">
+          <a class="nav-link" href="/snipets/user/{{loggedIn.id}}"><button class="btn btn-info" type="submit"> My Snippets</button></a>
+        </li>
+        <li class="nav-item">
+          <form method="post" class="nav-link" action="/logout"><button class="btn btn-danger" type="submit">logout</button></form>
         </li>
         {{else}}
         <li class="nav-item">
@@ -15,5 +18,15 @@
         </li>
         {{/if}}
     </ul>
+    <div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Snipets
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="/snipets">All Snipets</a>
+    <a class="dropdown-item" href="/snipets/tags">Tags</a>
+     <a class="dropdown-item" href="snipets/create">Create</a>
+  </div>
+</div>
   </div>
   </nav>

@@ -5,6 +5,10 @@
 			color: #333;
 			font: 100%/1.4 Arial, sans-serif;
 		}
+
+    .inline {
+      display: inline-block;
+    }
 		.section {
 			border: 4px solid #fff;
 			margin: 25px 0 10px ;
@@ -36,7 +40,7 @@
         {{this.content}}
       </div>
       <a href="/snipets/edit/{{this.id}}"><button type="button" class="btn btn-success">Edit</button></a>
-      <form method="post" action="snipets/delete/{{this.id}}"><button type="button" class="btn btn-danger">Delete</button>
+      <form method="post" class="inline" action="/snipets/delete/{{this.id}}"><button type="submit" class="btn btn-danger">Delete</button></form>
     {{/each}}
   {{/if}}
 	

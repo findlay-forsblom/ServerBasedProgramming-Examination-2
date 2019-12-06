@@ -92,19 +92,26 @@ body {
 	margin-top:24px;
 	margin-bottom:100px;
 }
+
+p {
+  color: white;
+  padding-top: 1em;
+}
 </style>
 
-
+<p>For more multiple tags seperate with a ','</p>
 <div id="wrapper">
-
-	<form id="paper" method="post" action="/snipets/create">
+  {{#if snipetEdit }}
+    	<form id="paper" method="post" action="/snipets/edit/{{snipetEdit.id}}">
+      {{else}}
+      	<form id="paper" method="post" action="/snipets/create">
+    {{/if}}
 
 		<div id="margin">Tag: <input id="title" type="text" name="tag"></div>
-		<textarea placeholder="Enter code snipet." id="text" name="text" rows="4" style="word-wrap: break-word; resize: none; height: 160px; "></textarea>  
+		<textarea placeholder="Enter code snipet." id="text" name="text" rows="4" style="word-wrap: break-word; resize: none; height: 160px; ">{{snipetEdit.content }}</textarea>  
 		<br>
     {{#if snipetEdit }}
     	<input id="button" type="submit" value="Save">
-      <p>{{snipetEdit.content}}</p>
       {{else}}
       	<input id="button" type="submit" value="Create">
     {{/if}}
@@ -112,12 +119,4 @@ body {
 
 </div>
 
-{{#if snipetEdit }}
-<script type="text/javascript">
-  const text = document.getElementById('text')
-  console.log(text)
-  text.value = "{{snipetEdit.content}}"
-  const lol = "{{snipetEdit.content}}"
-  console.log(lol)
-</script>
-{{/if}}
+

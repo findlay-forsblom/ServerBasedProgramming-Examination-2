@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const snipetSchema = mongoose.Schema({
   content: { type: String, required: true },
-  user: { type: mongoose.Types.ObjectId, ref: 'User' },
+  user: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
   tag: [{ type: mongoose.Types.ObjectId, ref: 'Tag' }]
 })
 

@@ -5,9 +5,14 @@
 			color: #333;
 			font: 100%/1.4 Arial, sans-serif;
 		}
+    .flex {
+      display: flex;
+      justify-content: space-between;
+      width: 710px;
+    }
 		.section {
 			border: 4px solid #fff;
-			margin: 25px;
+			margin: 25px 0 10px;
 			padding: 10px 20px;
 			overflow: hidden;
 			width: 710px;
@@ -31,12 +36,34 @@
 </head>
 <body>
 
+  {{#if snips}}
+  <h3>Snipets Creator {{tagName.name}} examples </h3>
+  {{/if}}
+
   {{#if snipets }}
 {{#each snipets}}
   <div class="section">
     {{this.content}}
-	</div>	
+	</div>
+  <div class="flex">
+    <label><span class="font-weight-bold">Author:</span> {{this.user}}</label>	
+   <label class="text-right">Created at: </label>	
+  </div>
+  <p>Tags: {{this.tag}} </p>	
 {{/each}}
 {{/if}}
+
+ {{#if snips }}
+{{#each snips}}
+  <div class="section">
+    {{this.content}}
+	</div>
+  <div class="flex">
+    <label><span class="font-weight-bold">Author:</span> {{this.user}}</label>	
+   <label class="text-right">Created at: </label>	
+  </div>
+{{/each}}
+{{/if}}
+	
 	
 	

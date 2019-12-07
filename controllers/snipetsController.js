@@ -5,8 +5,33 @@ const Tag = require('../models/tag.js')
 const snipetsController = {}
 
 snipetsController.index = async (req, res, next) => {
-  const snipets = await Snipet.find()
-  res.render('snipets/index', { snipets })
+  const snipets = []
+
+  Snipet.find().populate('user').populate('tag').exec((err, snipet) => {
+    if (err) {
+      console.log(err) // TODO Throw server error
+    } else {
+      snipet.forEach(snip => {
+        let str = ''
+        snip.tag.forEach((tag, i) => {
+          if (i === snip.tag.length - 1) {
+            str += tag.name
+          } else {
+            str += tag.name + ', '
+          }
+        })
+        snipets.push(
+          {
+            user: snip.user.username,
+            id: snip._id,
+            content: snip.content,
+            tag: str
+          }
+        )
+      })
+      res.render('snipets/index', { snipets })
+    }
+  })
 }
 
 snipetsController.create = (req, res, next) => {
@@ -33,7 +58,6 @@ snipetsController.checkSameUser = (req, res, next) => {
 
 snipetsController.checkRights = async (req, res, next) => {
   const id = req.params.id
-  console.log('id is ', id)
   try {
     const snipet = await Snipet.findById({ _id: id })
     let user = snipet.user
@@ -98,19 +122,75 @@ snipetsController.createPost = async (req, res, next) => {
 
 snipetsController.usersPost = async (req, res, next) => {
   const userid = req.params.id
-  const snips = await Snipet.find({ user: userid })
-  res.render('user/index', { snips })
+  const snips = []
+  await Snipet.find({ user: userid }).populate('user').populate('tag').exec(async (err, snipet) => {
+    if (err) {
+      console.log(err) // TODO fix EROOR MANAGENMENT
+    } else {
+      snipet.forEach(snip => {
+        console.log(snip)
+        let str = ''
+        snip.tag.forEach((tag, i) => {
+          if (i === snip.tag.length - 1) {
+            str += tag.name
+          } else {
+            str += tag.name + ', '
+          }
+        })
+        snips.push(
+          {
+            user: snip.user.username,
+            id: snip._id,
+            content: snip.content,
+            tag: str
+          }
+        )
+        console.log('my name is ', str)
+        console.log(snips)
+      })
+    }
+    if (snips.length > 0) {
+      const user = snips[0].user
+      const lol = {}
+      lol.name = user
+      res.locals.user = lol
+      console.log(user)
+    } else {
+      const user = await User.findById({ _id: userid })
+      const lol = {}
+      lol.name = user.username
+      console.log(user.username)
+      res.locals.user = lol
+    }
+    res.render('user/index', { snips })
+  })
 }
 
 snipetsController.userEdit = async (req, res, next) => {
   const snipetid = req.params.id
-  try {
-    const snipetEdit = await Snipet.findOne({ _id: snipetid })
-    res.render('snipets/create', { snipetEdit })
-  } catch (error) {
-    req.session.flash = { type: 'danger', text: error.message }
-    return res.redirect('/snipets')
-  }
+  Snipet.findOne({ _id: snipetid }).populate('tag').exec((err, snipet) => {
+    if (err) {
+      console.log(err) //TODO FIX ERROR MANAGEMENT
+    } else {
+      console.log(snipet.tag)
+      let str = ''
+      snipet.tag.forEach((tag, i) => {
+        if (i === snipet.tag.length - 1) {
+          str += tag.name
+        } else {
+          str += tag.name + ', '
+        }
+      })
+      const snipetEdit =
+          {
+            user: snipet.user.username,
+            id: snipet._id,
+            content: snipet.content,
+            tag: str
+          }
+      res.render('snipets/create', { snipetEdit })
+    }
+  })
 }
 
 snipetsController.editPost = async (req, res, next) => {
@@ -138,6 +218,65 @@ snipetsController.userDeletePost = async (req, res, next) => {
     req.session.flash = { type: 'danger', text: 'Some error occured while deleting' }
     return res.redirect('/snipets')
   }
+}
+
+snipetsController.tags = async (req, res, next) => {
+  const tags = await Tag.find()
+  const allTags = []
+  tags.forEach(tag => {
+    console.log(tag)
+    const length = tag.snipet.length
+    if (length > 0) {
+      allTags.push(
+        {
+          id: tag._id,
+          name: tag.name,
+          length: length
+        }
+      )
+    }
+  })
+  console.log(allTags)
+  res.render('snipets/tags', { allTags })
+}
+
+snipetsController.getTags = async (req, res, next) => {
+  const id = req.params.id
+  const snips = []
+  const tag = await Tag.findById({ _id: id })
+  const lol = {}
+  lol.name = tag.name
+  console.log(lol)
+  res.locals.tagName = lol
+  Snipet.find({ tag: { $in: id } }).populate('user').exec((err, snipet) => {
+    if (err) {
+      console.log(err)//TODOD FIX THAT SHIT
+    } else {
+      snipet.forEach(snip => {
+        snips.push(
+          {
+            user: snip.user.username,
+            id: snip._id,
+            content: snip.content
+          }
+        )
+      })
+      console.log(snips)
+    }
+    res.render('snipets/index', { snips })
+  })
+
+
+  // Tag.findOne({ _id: id }).populate('snipet').exec((err, tag) => {
+  //   if (err) {
+  //     console.log(err)
+  //   } else {
+  //     console.log(tag)
+  //     // tag.snipet.forEach(lol => {
+  //     //   console.log(lol)
+  //     // })
+  //   }
+  // })
 }
 
 module.exports = snipetsController

@@ -107,7 +107,7 @@ p {
       	<form id="paper" method="post" action="/snipets/create">
     {{/if}}
 
-		<div id="margin">Tag: <input id="title" type="text" name="tag"></div>
+		<div id="margin">Tag: <input id="title" type="text" name="tag" value="{{snipetEdit.tag}}"></div>
 		<textarea placeholder="Enter code snipet." id="text" name="text" rows="4" style="word-wrap: break-word; resize: none; height: 160px; ">{{snipetEdit.content }}</textarea>  
 		<br>
     {{#if snipetEdit }}

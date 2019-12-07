@@ -1,0 +1,39 @@
+<style>
+.flex {
+  display: flex;
+  background-color: #2D4961;
+  width: 310px;
+  justify-content: space-between;
+  color: white;
+  margin: 1em;
+  border-radius: 4px;
+}
+
+a {
+  color: white;
+}
+
+div {
+  display: inline-block;
+}
+
+label {
+  padding: 0.2em 1em;
+}
+</style>
+
+{{#if allTags }}
+  {{#each allTags}}
+    <div>
+       <a href="/snipets/tags/{{this.id}}">
+      <div class="flex">
+       <label>{{this.name}}</label><label>{{this.length}}</label>
+      </div>
+      </a>
+    </div>
+  {{/each}}
+{{/if}}
+
+
+
+

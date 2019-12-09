@@ -5,7 +5,6 @@ const SESSION_NAME = require('../app.js')
 
 homeController.index = (req, res, next) => {
   res.render('home/home')
-  console.log(req.session)
 }
 
 homeController.signUp = (req, res, next) => {

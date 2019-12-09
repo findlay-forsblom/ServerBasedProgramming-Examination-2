@@ -3,7 +3,9 @@ const mongoose = require('mongoose')
 const snipetSchema = mongoose.Schema({
   content: { type: String, required: true },
   user: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
-  tag: [{ type: mongoose.Types.ObjectId, ref: 'Tag' }]
+  tag: [{ type: mongoose.Types.ObjectId, ref: 'Tag' }],
+  created: { type: Date, required: true },
+  lastUpdated: { type: Date }
 })
 
 snipetSchema.pre('remove', function (next) {
@@ -18,8 +20,6 @@ snipetSchema.pre('remove', function (next) {
 
 snipetSchema.pre('remove', function (next) {
   const snipet = this
-  console.log(snipet.tag)
-  console.log('i am here now')
   mongoose.model('Tag').updateMany(
     { _id: { $in: snipet.tag } },
     { $pull: { snipet: snipet.id } },
@@ -27,6 +27,17 @@ snipetSchema.pre('remove', function (next) {
     next
   )
 })
+
+// snipetSchema.pre('updateOne', async function (next) {
+//   const snipet = this
+//   console.log('the tag is', snipet.id)
+//   mongoose.model('Tag').updateMany(
+//     { _id: { $in: snipet.tag } },
+//     { $pull: { snipet: snipet.id } },
+//     { multi: true },
+//     next
+//   )
+// })
 
 const Schema = mongoose.model('Snipet', snipetSchema)
 module.exports = Schema

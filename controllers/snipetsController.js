@@ -1,6 +1,9 @@
 const Snipet = require('../models/snipet.js')
 const User = require('../models/user.js')
 const Tag = require('../models/tag.js')
+const moment = require('moment')
+const mongoose = require('mongoose')
+const tagCreator = require('../libs/tagCreator.js')
 
 const snipetsController = {}
 
@@ -25,6 +28,7 @@ snipetsController.index = async (req, res, next) => {
             user: snip.user.username,
             id: snip._id,
             content: snip.content,
+            created: moment(snip.created).format('MMMM Do YYYY, h:mm a'),
             tag: str
           }
         )
@@ -82,31 +86,12 @@ snipetsController.createPost = async (req, res, next) => {
     const user = await User.findOne({ _id: userid })
     const snipet = new Snipet({
       content,
-      user
+      user,
+      created: Date.now(),
+      lastUpdated: Date.now()
     })
     if (tags.length !== 0) {
-      for (let element of split) {
-        console.log(element)
-        element = element.trim()
-        const tag = await Tag.findOne({ name: element })
-        if (tag) {
-          snipet.tag.push(tag)
-          await snipet.save()
-          tag.snipet.push(snipet)
-          await tag.save()
-        } else {
-          const newTag = new Tag({
-            name: element
-          })
-          await snipet.save()
-          newTag.snipet.push(snipet)
-          await newTag.save()
-          snipet.tag.push(newTag)
-          await snipet.save()
-        }
-        user.snipets.push(snipet)
-        await user.save()
-      }
+      await tagCreator.create(split, snipet, Tag, user)
     } else {
       await snipet.save()
       user.snipets.push(snipet)
@@ -128,7 +113,6 @@ snipetsController.usersPost = async (req, res, next) => {
       console.log(err) // TODO fix EROOR MANAGENMENT
     } else {
       snipet.forEach(snip => {
-        console.log(snip)
         let str = ''
         snip.tag.forEach((tag, i) => {
           if (i === snip.tag.length - 1) {
@@ -142,11 +126,11 @@ snipetsController.usersPost = async (req, res, next) => {
             user: snip.user.username,
             id: snip._id,
             content: snip.content,
+            created: moment(snip.created).format('MMMM Do YYYY, h:mm a'),
+            lastUpdated: moment(snip.lastUpdated).format('MMMM Do YYYY, h:mm a'),
             tag: str
           }
         )
-        console.log('my name is ', str)
-        console.log(snips)
       })
     }
     if (snips.length > 0) {
@@ -154,12 +138,10 @@ snipetsController.usersPost = async (req, res, next) => {
       const lol = {}
       lol.name = user
       res.locals.user = lol
-      console.log(user)
     } else {
       const user = await User.findById({ _id: userid })
       const lol = {}
       lol.name = user.username
-      console.log(user.username)
       res.locals.user = lol
     }
     res.render('user/index', { snips })
@@ -172,7 +154,6 @@ snipetsController.userEdit = async (req, res, next) => {
     if (err) {
       console.log(err) //TODO FIX ERROR MANAGEMENT
     } else {
-      console.log(snipet.tag)
       let str = ''
       snipet.tag.forEach((tag, i) => {
         if (i === snipet.tag.length - 1) {
@@ -195,13 +176,29 @@ snipetsController.userEdit = async (req, res, next) => {
 
 snipetsController.editPost = async (req, res, next) => {
   const snipetid = req.params.id
+  const tags = req.body.tag
+  const split = tags.split(',')
   try {
-    const snipetEdit = await Snipet.findOne({ _id: snipetid })
-    snipetEdit.content = req.body.text
-    await snipetEdit.save()
+    const snipet = await Snipet.findOne({ _id: snipetid })
+    //ASK WHY NOT WORKING IN PRE HOOK
+    await mongoose.model('Tag').updateMany(
+      { _id: { $in: snipet.tag } },
+      { $pull: { snipet: snipet.id } },
+      { multi: true }
+    )
+    await snipet.updateOne({
+      content: req.body.text,
+      tag: [],
+      lastUpdated: Date.now()
+    })
+
+    if (tags.length !== 0) {
+      await tagCreator.create(split, snipet, Tag)
+    }
     req.session.flash = { type: 'success', text: 'snipet succesfuly updated' }
     return res.redirect('/snipets/user/' + req.session.userId)
   } catch (error) {
+    console.log(error)
     req.session.flash = { type: 'danger', text: 'Some error occured while updating' }
     return res.redirect('/snipets')
   }
@@ -224,7 +221,6 @@ snipetsController.tags = async (req, res, next) => {
   const tags = await Tag.find()
   const allTags = []
   tags.forEach(tag => {
-    console.log(tag)
     const length = tag.snipet.length
     if (length > 0) {
       allTags.push(
@@ -236,7 +232,6 @@ snipetsController.tags = async (req, res, next) => {
       )
     }
   })
-  console.log(allTags)
   res.render('snipets/tags', { allTags })
 }
 
@@ -246,7 +241,6 @@ snipetsController.getTags = async (req, res, next) => {
   const tag = await Tag.findById({ _id: id })
   const lol = {}
   lol.name = tag.name
-  console.log(lol)
   res.locals.tagName = lol
   Snipet.find({ tag: { $in: id } }).populate('user').exec((err, snipet) => {
     if (err) {
@@ -261,22 +255,9 @@ snipetsController.getTags = async (req, res, next) => {
           }
         )
       })
-      console.log(snips)
     }
     res.render('snipets/index', { snips })
   })
-
-
-  // Tag.findOne({ _id: id }).populate('snipet').exec((err, tag) => {
-  //   if (err) {
-  //     console.log(err)
-  //   } else {
-  //     console.log(tag)
-  //     // tag.snipet.forEach(lol => {
-  //     //   console.log(lol)
-  //     // })
-  //   }
-  // })
 }
 
 module.exports = snipetsController

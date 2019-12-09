@@ -50,7 +50,6 @@ app.use((req, res, next) => {
   if (req.session.userId) {
     const lol = {}
     lol.id = req.session.userId
-    console.log(lol.id)
     res.locals.loggedIn = lol
   }
 

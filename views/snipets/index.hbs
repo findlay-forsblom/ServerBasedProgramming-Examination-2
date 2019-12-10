@@ -43,7 +43,7 @@
   {{#if snipets }}
 {{#each snipets}}
   <div class="section">
-    {{this.content}}
+    <pre>{{this.content}}</pre>
 	</div>
   <div class="flex">
     <label><span class="font-weight-bold">Author:</span> {{this.user}}</label>	
@@ -56,11 +56,11 @@
  {{#if snips }}
 {{#each snips}}
   <div class="section">
-    {{this.content}}
+    <pre>{{this.content}}</pre>
 	</div>
   <div class="flex">
     <label><span class="font-weight-bold">Author:</span> {{this.user}}</label>	
-   <label class="text-right">Created at: </label>	
+   <label class="text-right"><span class="font-weight-bold">Created at</span>: {{this.created}}</label>
   </div>
 {{/each}}
 {{/if}}

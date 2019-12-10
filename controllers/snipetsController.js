@@ -251,7 +251,8 @@ snipetsController.getTags = async (req, res, next) => {
           {
             user: snip.user.username,
             id: snip._id,
-            content: snip.content
+            content: snip.content,
+            created: moment(snip.created).format('MMMM Do YYYY, h:mm a')
           }
         )
       })

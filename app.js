@@ -4,6 +4,7 @@ const path = require('path')
 const mongoose = require('./config/mongoose.js')
 const session = require('express-session')
 const port = 8000
+const helmet = require('helmet')
 
 const SESSION_NAME = 'sid'
 const SESSION_SECRET = 'sshh!/it/s/a/secret/dontTell!!!'
@@ -14,9 +15,21 @@ const app = express()
 
 app.use(express.urlencoded({ extended: false }))
 
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "'unsafe-inline'", 'https://code.jquery.com/jquery-3.4.1.slim.min.js', 'https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js'],
+    styleSrc: ["'self'", "'unsafe-inline'", 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css']
+  }
+}))
+
+app.use(helmet.hidePoweredBy())
+
+app.use(helmet.xssFilter())
+
 const sessionOptions = {
-  name: SESSION_NAME, // Don't use default session cookie name.
-  secret: SESSION_SECRET, // Change it!!! The secret is used to hash the session with HMAC.
+  name: SESSION_NAME,
+  secret: SESSION_SECRET,
   resave: false, // Resave even if a request is not changing the session.
   saveUninitialized: false, // Don't save a created but not modified session.
   cookie: {
@@ -65,5 +78,7 @@ app.use((req, res, next) => {
   res.status(404)
   res.sendFile(path.join(__dirname, 'public', '404.html'))
 })
+
+//TODO FIXA 500
 
 app.listen(port, () => console.log('Server running at http://localhost:' + port))

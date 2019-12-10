@@ -1,6 +1,6 @@
-<div class="card" style="width: 18rem;">
+{{!-- <div class="card" style="width: 18rem;">
   <div class="card-body">
-    <h5 class="card-title">Welcome to Snipets Viewer</h5>
+    <h5 class="card-title">Welcome to Snipets Creator</h5>
     <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
     <p class="card-text">Here you can make view and edit Snipets. But to do so 
       you have to be first logged in
@@ -8,4 +8,75 @@
     <a href="/snipets/create" class="card-link">Create</a>
     <a href="/snipets" class="card-link">View</a>
   </div>
-</div>
+</div> --}}
+
+<style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+
+        .lol {
+          display: inline-block;
+        }
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="jumbotron.css" rel="stylesheet">
+  </head>
+  <body>
+<main role="main">
+
+  <!-- Main jumbotron for a primary marketing message or call to action -->
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="display-4">Hi and welcome to Snipets Creator!</h1>
+      <p>This is the worlds no 1 snipets creation site website. It includes a large number of snipets from javascript, Php, Pyhton, Java and many more that come from all over the world</p>
+       {{#if loggedIn}}
+        <p><a class="btn btn-info btn-lg lol" href="/snipets/user/{{loggedIn.id}}" role="button">My Snipets &raquo;</a></p>
+         {{else}}
+          <p><a class="btn btn-primary btn-lg lol" href="/snipets" role="button">View Snipets &raquo;</a></p>
+       {{/if}}
+    </div>
+  </div>
+  {{#unless loggedIn}}
+  <div class="container">
+    <!-- Example row of columns -->
+    <div class="row">
+      <div class="col-md-6">
+        <h4>Don't have an account yet?</h4>
+        <p>Create a free account today and join the worlds leading snipets creator website. It is simnple and fast </p>
+        <p><a class="btn btn-secondary" href="/signUp" role="button">Register &raquo;</a></p>
+      </div>
+      <div class="col-md-6">
+        <h4>Already Have an acccount?</h4>
+        <p>Sign in then to be able to view edit and share your snipets </p>
+        <p><a class="btn btn-secondary" href="/login" role="button">Sign in &raquo;</a></p>
+      </div>
+    </div>
+
+    <hr>
+
+  </div> <!-- /container -->
+  {{/unless}}
+
+</main>
+
+
+{{!-- <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+        <div class="dropdown-menu" aria-labelledby="dropdown01">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </li> --}}

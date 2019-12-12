@@ -112,10 +112,13 @@ p {
 		<br>
     {{#if snipetEdit }}
     	<input id="button" type="submit" value="Save">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
       {{else}}
       	<input id="button" type="submit" value="Create">
+         <input type="hidden" name="_csrf" value="{{csrfToken}}">
     {{/if}}
 	</form>
+
 
 </div>
 

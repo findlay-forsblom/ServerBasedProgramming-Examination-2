@@ -32,6 +32,8 @@ homeController.signUpPost = async (req, res, next) => {
   let username = req.body.username
   let email = req.body.email
   username = username.trim()
+  username = username.toLowerCase()
+  username = username.charAt(0).toUpperCase() + username.slice(1)
   email = email.trim()
   const password = req.body.password
   const confirmPassword = req.body.confirmPassword
@@ -63,7 +65,10 @@ homeController.login = (req, res, next) => {
 }
 
 homeController.loginPost = async (req, res, next) => {
-  const username = req.body.username
+  let username = req.body.username
+  username = username.trim()
+  username = username.toLowerCase()
+  username = username.charAt(0).toUpperCase() + username.slice(1)
   const password = req.body.password
   try {
     const user = await User.findOne({ username })
@@ -91,17 +96,9 @@ homeController.loginPost = async (req, res, next) => {
 homeController.logoutPost = async (req, res, next) => {
   delete req.session.userId
   req.session.flash = { type: 'success', text: 'Succesfully logged out' }
+  req.session.cookie.maxAge = 0
   res.clearCookie(SESSION_NAME, { path: '../app.js' })
   res.redirect('./')
-  // req.session.destroy(err => {
-  //   if (err) {
-  //     req.session.flash = { type: 'danger', text: 'some error ocurred while logging out pls try again' }
-  //     return res.redirect('./')
-  //   }
-  //   res.clearCookie(SESSION_NAME, { path: '../app.js' })
-  //   // req.session.flash = { type: 'success', text: 'Succesfully logged out' }
-  //   res.redirect('./')
-  // })
 }
 
 module.exports = homeController

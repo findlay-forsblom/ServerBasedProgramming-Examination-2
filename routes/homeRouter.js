@@ -2,6 +2,9 @@ const controller = require('../controllers/homeController.js')
 
 const express = require('express')
 const router = express.Router()
+const csrf = require('csurf')
+
+const csrfProtection = csrf({ cookie: true })
 
 router.get('/', controller.index)
 router.route('/login')

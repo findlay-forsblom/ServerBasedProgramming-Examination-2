@@ -6,13 +6,15 @@ const mongoose = require('mongoose')
 const tagCreator = require('../libs/tagCreator.js')
 
 const snipetsController = {}
+const err = {}
 
 snipetsController.index = async (req, res, next) => {
   const snipets = []
 
   Snipet.find().populate('user').populate('tag').exec((err, snipet) => {
     if (err) {
-      console.log(err) // TODO Throw server error
+      console.log(err)
+      return next(err)
     } else {
       snipet.forEach(snip => {
         let str = ''
@@ -56,23 +58,35 @@ snipetsController.checkSameUser = (req, res, next) => {
   if (id === req.session.userId && res.locals.loggedIn) {
     next()
   } else {
-    res.status(403).send('unauthorised')
+    err.status = 403
+    return next(err)
   }
 }
 
 snipetsController.checkRights = async (req, res, next) => {
   const id = req.params.id
   try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      err.status = 404
+      return next(err)
+    }
     const snipet = await Snipet.findById({ _id: id })
-    let user = snipet.user
-    user = user.toString()
-    if (user === req.session.userId && res.locals.loggedIn) {
-      next()
+    if (snipet) {
+      let user = snipet.user
+      user = user.toString()
+      if (user === req.session.userId && res.locals.loggedIn) {
+        next()
+      } else {
+        err.status = 403
+        return next(err)
+      }
     } else {
-      res.status(403).send('forbidden')
+      err.status = 404
+      return next(err)
     }
   } catch (error) {
     console.log(error)
+    next(error)
   }
 }
 
@@ -80,7 +94,9 @@ snipetsController.createPost = async (req, res, next) => {
   const content = req.body.text
   const userid = req.session.userId
   const tags = req.body.tag
-  const split = tags.split(',')
+  let tagCapitalized = tags.toLowerCase()
+  tagCapitalized = tagCapitalized.charAt(0).toUpperCase() + tagCapitalized.slice(1)
+  const split = tagCapitalized.split(',')
 
   try {
     const user = await User.findOne({ _id: userid })
@@ -110,7 +126,8 @@ snipetsController.usersPost = async (req, res, next) => {
   const snips = []
   await Snipet.find({ user: userid }).populate('user').populate('tag').exec(async (err, snipet) => {
     if (err) {
-      console.log(err) // TODO fix EROOR MANAGENMENT
+      console.log(err)
+      return next(err)
     } else {
       snipet.forEach(snip => {
         let str = ''
@@ -144,7 +161,7 @@ snipetsController.usersPost = async (req, res, next) => {
       lol.name = user.username
       res.locals.user = lol
     }
-    res.render('user/index', { snips })
+    res.render('user/index', { snips, csrfToken: req.csrfToken() })
   })
 }
 
@@ -152,9 +169,11 @@ snipetsController.userEdit = async (req, res, next) => {
   const snipetid = req.params.id
   Snipet.findOne({ _id: snipetid }).populate('tag').exec((err, snipet) => {
     if (err) {
-      console.log(err) //TODO FIX ERROR MANAGEMENT
+      console.log(err)
+      return next(err)
     } else {
       let str = ''
+      // console.log(snipet)
       snipet.tag.forEach((tag, i) => {
         if (i === snipet.tag.length - 1) {
           str += tag.name
@@ -169,7 +188,7 @@ snipetsController.userEdit = async (req, res, next) => {
             content: snipet.content,
             tag: str
           }
-      res.render('snipets/create', { snipetEdit })
+      res.render('snipets/create', { snipetEdit, csrfToken: req.csrfToken() })
     }
   })
 }
@@ -177,10 +196,12 @@ snipetsController.userEdit = async (req, res, next) => {
 snipetsController.editPost = async (req, res, next) => {
   const snipetid = req.params.id
   const tags = req.body.tag
-  const split = tags.split(',')
+  let tagCapitalized = tags.toLowerCase()
+  tagCapitalized = tagCapitalized.charAt(0).toUpperCase() + tagCapitalized.slice(1)
+  const split = tagCapitalized.split(',')
   try {
     const snipet = await Snipet.findOne({ _id: snipetid })
-    //ASK WHY NOT WORKING IN PRE HOOK
+
     await mongoose.model('Tag').updateMany(
       { _id: { $in: snipet.tag } },
       { $pull: { snipet: snipet.id } },
@@ -244,7 +265,8 @@ snipetsController.getTags = async (req, res, next) => {
   res.locals.tagName = lol
   Snipet.find({ tag: { $in: id } }).populate('user').exec((err, snipet) => {
     if (err) {
-      console.log(err)//TODOD FIX THAT SHIT
+      console.log(err)
+      next(err)
     } else {
       snipet.forEach(snip => {
         snips.push(

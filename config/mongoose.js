@@ -1,3 +1,4 @@
+'use strict'
 const mongoose = require('mongoose')
 
 const CONNECTION_STRING = 'mongodb+srv://dbUser:dbUser@server-assignments-lrsbo.mongodb.net/test?retryWrites=true&w=majority'

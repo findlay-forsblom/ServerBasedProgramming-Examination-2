@@ -1,3 +1,4 @@
+'use strict'
 const homeController = {}
 const passwordChecker = require('../libs/passwordHelper.js')
 const User = require('../models/user.js')

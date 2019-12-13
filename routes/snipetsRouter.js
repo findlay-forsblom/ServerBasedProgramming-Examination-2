@@ -1,3 +1,4 @@
+'use strict'
 const controller = require('../controllers/snipetsController.js')
 const express = require('express')
 const router = express.Router()

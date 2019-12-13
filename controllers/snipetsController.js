@@ -1,3 +1,4 @@
+'use strict'
 const Snipet = require('../models/snipet.js')
 const User = require('../models/user.js')
 const Tag = require('../models/tag.js')

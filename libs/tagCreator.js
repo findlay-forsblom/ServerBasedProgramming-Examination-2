@@ -1,8 +1,8 @@
+'use strict'
 const tagCreator = {}
 
 tagCreator.create = async (split, snipet, Tag, user) => {
   for (let element of split) {
-    console.log(element)
     element = element.trim()
     element = element.toLowerCase()
     element = element.charAt(0).toUpperCase() + element.slice(1)

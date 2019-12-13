@@ -79,9 +79,15 @@ homeController.loginPost = async (req, res, next) => {
     }
     const result = await user.comparePassword(password)
     if (result) {
-      req.session.flash = { type: 'success', text: `Welcome ${user.username}. You have succesfully logged in. You can now view and edit your own snipets` }
       req.session.userId = user.id
-      res.redirect('./')
+      if (req.session.redirectCreate) {
+        delete req.session.redirectCreate
+        req.session.flash = { type: 'success', text: `Welcome ${user.username}. You have succesfully logged in. You can now create snipets` }
+        res.redirect('/snipets/create')
+      } else {
+        req.session.flash = { type: 'success', text: `Welcome ${user.username}. You have succesfully logged in. You can now view and edit your own snipets` }
+        res.redirect('./')
+      }
     } else {
       req.session.flash = { type: 'danger', text: 'Log in failed. username or password is incorrect' }
       res.redirect('/login')

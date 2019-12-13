@@ -49,6 +49,7 @@ snipetsController.authorization = (req, res, next) => {
     next()
   } else {
     req.session.flash = { type: 'danger', text: 'You have to log in first to create post, Or register an account if new' }
+    req.session.redirectCreate = true
     res.redirect('/login')
   }
 }
@@ -145,7 +146,8 @@ snipetsController.usersPost = async (req, res, next) => {
             content: snip.content,
             created: moment(snip.created).format('MMMM Do YYYY, h:mm a'),
             lastUpdated: moment(snip.lastUpdated).format('MMMM Do YYYY, h:mm a'),
-            tag: str
+            tag: str,
+            csrfToken: req.csrfToken()
           }
         )
       })
@@ -161,7 +163,7 @@ snipetsController.usersPost = async (req, res, next) => {
       lol.name = user.username
       res.locals.user = lol
     }
-    res.render('user/index', { snips, csrfToken: req.csrfToken() })
+    res.render('user/index', { snips })
   })
 }
 
@@ -173,7 +175,6 @@ snipetsController.userEdit = async (req, res, next) => {
       return next(err)
     } else {
       let str = ''
-      // console.log(snipet)
       snipet.tag.forEach((tag, i) => {
         if (i === snipet.tag.length - 1) {
           str += tag.name

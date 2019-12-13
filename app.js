@@ -40,7 +40,7 @@ const sessionOptions = {
   saveUninitialized: false, // Don't save a created but not modified session.
   cookie: {
     maxAge: 1000 * 60 * 5, // % minuites
-    sameSite: true,
+    sameSite: 'lax', // change to lax maybe
     HttpOnly: true
   }
 }

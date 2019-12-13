@@ -2,9 +2,9 @@ const controller = require('../controllers/homeController.js')
 
 const express = require('express')
 const router = express.Router()
-const csrf = require('csurf')
+// const csrf = require('csurf')
 
-const csrfProtection = csrf({ cookie: true })
+// const csrfProtection = csrf({ cookie: true })
 
 router.get('/', controller.index)
 router.route('/login')
@@ -15,8 +15,5 @@ router.route('/signup')
   .post(controller.redirectHome, controller.signUpPost)
 router.route('/logout')
   .post(controller.redirectLogin, controller.logoutPost)
-// router.route('/create')
-//   .get(controller.create)
-//   .post(controller.post)
 
 module.exports = router

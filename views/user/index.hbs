@@ -66,12 +66,12 @@
        <p class="margin">Tags: {{this.tag}} </p>	
       <a href="/snipets/edit/{{this.id}}"><button type="button" class="btn btn-success">Edit</button></a>
       <form method="post" class="inline" action="/snipets/delete/{{this.id}}">
-        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <input type="hidden" name="_csrf" value="{{this.csrfToken}}">
         <button type="submit" class="btn btn-danger">Delete</button>
       </form>
     {{/each}}
     {{else}}
-    <h3>Hi {{user.name}}, You curently do not have any snipets yet</h3> 
+    <h3>Hi {{user.name}}, You curently do not have any snipets</h3> 
   {{/if}}
 	
 	

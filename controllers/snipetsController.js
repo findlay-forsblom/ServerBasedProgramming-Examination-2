@@ -197,9 +197,7 @@ snipetsController.userEdit = async (req, res, next) => {
 snipetsController.editPost = async (req, res, next) => {
   const snipetid = req.params.id
   const tags = req.body.tag
-  let tagCapitalized = tags.toLowerCase()
-  tagCapitalized = tagCapitalized.charAt(0).toUpperCase() + tagCapitalized.slice(1)
-  const split = tagCapitalized.split(',')
+  const split = tags.split(',')
   try {
     const snipet = await Snipet.findOne({ _id: snipetid })
 
